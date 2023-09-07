@@ -2,35 +2,55 @@
 const express = require('express');
 // envio de correo electrónicos
 const nodemailer = require('nodemailer');
+
+// para gestionar cors
+const cors = require('cors');
+
+// ESTO NO SE VIO EN CLASES
+// para loguear las peticiones que recibe el servidor
+var morgan = require('morgan')
+//para trabajar con el sistema de archivos: crear leer etc archivos
+var fs = require('fs')
+// trabajar con las rutas de archivos y directorios del sistema de archivos
+var path = require('path')
+
 // manejo de variables de entorno
 require('dotenv').config();
 
 // mi app servidor 
 const app = express();
 
-// para recibir las peticiones del req en formato json
+// recibimos datos en formato json
 app.use(express.json());
+// urlconded se encarga de analizar los datos codificados en la url y los coloca en el req.body 
+// para poder trabajar con ellos en el manejdaor de la ruta.
 app.use(express.urlencoded({extended:true}))
 
-// console.log(process.env);
 
+// ESTO NO SE VIO EN CLASES
+// descomentar y mirar lo que muestra la consola en cada solicitud (get o post) que recibe el servidor
+// app.use(morgan('dev')); 
+
+// CREA UN ARCHIVO DE ACCESO
+// create a write stream (in append mode)
+var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+// setup the logger
+app.use(morgan('combined', { stream: accessLogStream }))
+
+
+app.use(cors());
 
 // endpoint de testeo del API
 app.get('/', (req, res)=>{
-    // console.log('hubo get');
-    
-    const saludo = 'bienvenido a prog3 - 2023!';
-
-	    res.status(200).json({saludo});
+    // const saludo = 'bienvenido a prog3 - 2023!';
+    const saludo = {estado:true, mensaje:'bienvenido!'}
+    res.status(200).json(saludo);
 });
 
 
 app.post('/contacto', (req, res)=>{
     const {nombre, correo, mensaje} = req.body;
-    // const nombre = req.body.nombre
-    // console.log(nombre1);
-    // console.log(correo);
-    // console.log(mensaje);
+    // console.log(nombre);
 
     const transporter = nodemailer.createTransport({
         service:'gmail',
@@ -40,32 +60,30 @@ app.post('/contacto', (req, res)=>{
         }
     })
 
-	//TAREA: mejorar el cuerpo del correo
-	//agregar el mensaje que recibmos en el body 
-    const cuerpo = '<h1>Hola llego un correo de ' + nombre + ' </h1>';
+    //TAREA: mejorar el cuerpo del correo
+    const cuerpo = `<h1>Hola llego un correo de ${nombre}</h1> 
+                    <p>${mensaje}</p>
+                    <p> correo: ${correo}</p>`;
 
     const opciones = {
-        from : 'api prog3',
-        to: 'oreopepito01@gmail.com',
-        subject: 'Correo de prueba',
-        html: cuerpo
+        from : correo,
+        to:'oreopepito01@gmail.com',
+        subject:'Consulta Scaloneta',
+        html:cuerpo
     }
 
     transporter.sendMail(opciones, (error, info) => {
         if(error){
-            console.log('error -> ', error);
+            // console.log('error -> ', error);
             const respuesta = 'correo no enviado';
             res.json({respuesta});
         }else{
-            console.log(info);
+            // console.log(info);
             const respuesta = 'correo enviado';
             res.json({respuesta});
         }
     })
-
-    
 })
-
 
 app.listen(process.env.PUERTO, ()=>{
     console.log('API prog3 iniciada ' + process.env.PUERTO);
