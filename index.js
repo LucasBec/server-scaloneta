@@ -104,7 +104,7 @@ app.post('/contacto', (req, res)=>{
 
 // conexión a la base de datos
 
-/* const conexion = mysql.createConnection({
+const conexion = mysql.createConnection({
     host: 'localhost',
     user: 'scaloneta12',
     database: 'scaloneta12',
@@ -121,7 +121,7 @@ app.get('/jugadores', (req, res) =>{
             res.status(200).json(resultado);
         }
     })
-}); */
+});
 
 
 
