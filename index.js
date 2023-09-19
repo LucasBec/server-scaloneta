@@ -8,14 +8,21 @@ const cors = require('cors');
 
 // ESTO NO SE VIO EN CLASES
 // para loguear las peticiones que recibe el servidor
-var morgan = require('morgan')
+var morgan = require('morgan');
 //para trabajar con el sistema de archivos: crear leer etc archivos
-var fs = require('fs')
+var fs = require('fs');
 // trabajar con las rutas de archivos y directorios del sistema de archivos
-var path = require('path')
+var path = require('path');
+
+// handlerbar 
+const handlebars = require('handlebars');
+
+// mysql
+const mysql = require('mysql2');
 
 // manejo de variables de entorno
 require('dotenv').config();
+
 
 // mi app servidor 
 const app = express();
@@ -29,7 +36,7 @@ app.use(express.urlencoded({extended:true}))
 
 // ESTO NO SE VIO EN CLASES
 // descomentar y mirar lo que muestra la consola en cada solicitud (get o post) que recibe el servidor
-// app.use(morgan('dev')); 
+app.use(morgan('dev')); 
 
 // CREA UN ARCHIVO DE ACCESO
 // create a write stream (in append mode)
@@ -50,8 +57,22 @@ app.get('/', (req, res)=>{
 
 app.post('/contacto', (req, res)=>{
     const {nombre, correo, mensaje} = req.body;
-    // console.log(nombre);
+    
+    const plantillaHds2 = fs.readFileSync(path.join(__dirname, '/handlebars/plantilla.hbs'), 'utf8');
+    
+    const correoTemplate = handlebars.compile(plantillaHds2);
+  
+    // Datos de la plantilla
+    const datos = {
+      nombre: nombre,
+      correo: correo,
+      mensaje: mensaje
+    };
+  
+    // Renderizo la plantilla con los datos
+    const correoHtml = correoTemplate(datos);
 
+    // console.log(correoHtml);
     const transporter = nodemailer.createTransport({
         service:'gmail',
         auth:{
@@ -60,16 +81,11 @@ app.post('/contacto', (req, res)=>{
         }
     })
 
-    //TAREA: mejorar el cuerpo del correo
-    const cuerpo = `<h1>Hola llego un correo de ${nombre}</h1> 
-                    <p>${mensaje}</p>
-                    <p> correo: ${correo}</p>`;
-
     const opciones = {
         from : correo,
         to:'oreopepito01@gmail.com',
-        subject:'Consulta Scaloneta',
-        html:cuerpo
+        subject:'Consulta App Scaloneta',
+        html: correoHtml
     }
 
     transporter.sendMail(opciones, (error, info) => {
@@ -83,7 +99,30 @@ app.post('/contacto', (req, res)=>{
             res.json({respuesta});
         }
     })
-})
+});
+
+
+// conexión a la base de datos
+const conexion = mysql.createConnection({
+    host: 'localhost',
+    user: 'scaloneta12',
+    database: 'scaloneta12',
+    password: '2023$prog3'
+});
+
+app.get('/jugadores', (req, res) =>{
+    const consulta = 'SELECT * FROM futbolista WHERE activo = 1';
+    conexion.execute(consulta, (error, resultado, campos) => {
+        if (error){
+            console.log(error);
+        }else{
+            console.log(campos);
+            res.status(200).json(resultado);
+        }
+    })
+});
+
+
 
 app.listen(process.env.PUERTO, ()=>{
     console.log('API prog3 iniciada ' + process.env.PUERTO);
