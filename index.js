@@ -36,7 +36,7 @@ app.use(express.urlencoded({extended:true}))
 
 // ESTO NO SE VIO EN CLASES
 // descomentar y mirar lo que muestra la consola en cada solicitud (get o post) que recibe el servidor
-app.use(morgan('dev')); 
+app.use(morgan('short')); 
 
 // CREA UN ARCHIVO DE ACCESO
 // create a write stream (in append mode)
@@ -55,56 +55,18 @@ app.get('/', (req, res)=>{
 });
 
 
-app.post('/contacto', (req, res)=>{
-    const {nombre, correo, mensaje} = req.body;
-    
-    const plantillaHds2 = fs.readFileSync(path.join(__dirname, '/handlebars/plantilla.hbs'), 'utf8');
-    
-    const correoTemplate = handlebars.compile(plantillaHds2);
-  
-    // Datos de la plantilla
-    const datos = {
-      nombre: nombre,
-      correo: correo,
-      mensaje: mensaje
-    };
-  
-    // Renderizo la plantilla con los datos
-    const correoHtml = correoTemplate(datos);
+// las rutas del api
+const v1Publico = require('./v1/rutas/publico');
+const v1Jugador = require('./v1/rutas/jugador');
 
-    // console.log(correoHtml);
-    const transporter = nodemailer.createTransport({
-        service:'gmail',
-        auth:{
-            user:process.env.CORREO,
-            pass:process.env.CLAVE
-        }
-    })
-
-    const opciones = {
-        from : correo,
-        to:'oreopepito01@gmail.com',
-        subject:'Consulta App Scaloneta',
-        html: correoHtml
-    }
-
-    transporter.sendMail(opciones, (error, info) => {
-        if(error){
-            // console.log('error -> ', error);
-            const respuesta = 'correo no enviado';
-            res.json({respuesta});
-        }else{
-            // console.log(info);
-            const respuesta = 'correo enviado';
-            res.json({respuesta});
-        }
-    })
-});
+// middlEWare
+app.use('/api/v1/publico', v1Publico);
+app.use('/api/v1/jugador', v1Jugador);
 
 
 // conexión a la base de datos
 
-const conexion = mysql.createConnection({
+/* const conexion = mysql.createConnection({
     host: 'localhost',
     user: 'scaloneta12',
     database: 'scaloneta12',
@@ -121,10 +83,10 @@ app.get('/jugadores', (req, res) =>{
             res.status(200).json(resultado);
         }
     })
-});
+}); */
 
 
 
 app.listen(process.env.PUERTO, ()=>{
-    console.log('API prog3 iniciada ' + process.env.PUERTO);
+    console.log('- 🛵 API prog3 iniciada en el puerto ' + process.env.PUERTO);
 })
