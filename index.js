@@ -57,11 +57,11 @@ app.get('/', (req, res)=>{
 
 // las rutas del api
 const v1Publico = require('./v1/rutas/publico');
-const v1Jugador = require('./v1/rutas/jugador');
+const v1Futbolista = require('./v1/rutas/futbolista');
 
 // middlEWare
 app.use('/api/v1/publico', v1Publico);
-app.use('/api/v1/jugador', v1Jugador);
+app.use('/api/v1/futbolista', v1Futbolista);
 
 
 // conexión a la base de datos
