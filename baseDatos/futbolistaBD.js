@@ -66,12 +66,31 @@ const crear = async (futbolista) => {
     return buscarPorId(futbolistaNuevo.insertId);
 }
 
+// Función para buscar un futbolista por DNI
+const buscarPorDNI = async (dni) => {
+    const consulta = 'SELECT * FROM futbolista WHERE dni = ?';
+    try {
+        const [futbolista] = await conexion.query(consulta, [dni]);
+        return futbolista[0]; // Devuelve el primer resultado (o null si no se encuentra)
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Función para verificar si un futbolista con un DNI ya existe
+const futbolistaExistente = async (dni) => {
+    const futbolista = await buscarPorDNI(dni);
+    return futbolista !== null; // Devuelve true si el futbolista existe, false si no existe
+};
+
 
 
 module.exports = {
     buscarPorId,
     buscarTodos,
     eliminar,
-    crear
+    crear,
+    buscarPorDNI,
+    futbolistaExistente,
 }
 

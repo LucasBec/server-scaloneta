@@ -49,28 +49,35 @@ eliminar = async (req, res) => {
 }
 
 crear = async (req, res) => {
+    const { dni, nombre, apellido, posicion, apodo, foto, pieHabil } = req.body;
 
-    const {dni, nombre, apellido, posicion, apodo, foto, pieHabil} = req.body;
+    if (!dni || !nombre || !apellido || !posicion || !pieHabil) {
+        res.status(404).json({ estado: 'FALLA', msj: 'Faltan datos obligatorios' });
+    } else {
+        // Primero, verifica si el DNI ya existe en la base de datos
+        try {
+            const futbolistaExistente = await futbolistaBD.buscarPorDNI(dni);
 
-    if(!dni || !nombre || !apellido || !posicion || !pieHabil){
-        res.status(404).json({estado:'FALLA', msj:'Faltan datos obligatorios'});
-    }else{
-        const futbolista = {
-            dni:dni,
-            nombre:nombre,
-            apellido:apellido,
-            posicion:posicion,
-            apodo:apodo,
-            foto:foto,
-            pieHabil:pieHabil
-        }; 
+            if (futbolistaExistente) {
+                // Si futbolistaExistente tiene un valor, significa que ya existe un futbolista con ese DNI
+                res.status(400).json({ estado: 'FALLA', msj: 'El DNI ya está registrado' });
+            } else {
+                // Si no existe un futbolista con ese DNI, procede a crear el nuevo futbolista
+                const futbolista = {
+                    dni: dni,
+                    nombre: nombre,
+                    apellido: apellido,
+                    posicion: posicion,
+                    apodo: apodo,
+                    foto: foto,
+                    pieHabil: pieHabil
+                };
 
-
-        try{
-            const futbolistaNuevo = await futbolistaBD.crear(futbolista);
-            res.status(201).json({estado:'ok', msj:'Futbolista creado', dato:futbolistaNuevo});
-        }catch(exec){
-            throw exec;
+                const futbolistaNuevo = await futbolistaBD.crear(futbolista);
+                res.status(201).json({ estado: 'ok', msj: 'Futbolista creado', dato: futbolistaNuevo });
+            }
+        } catch (error) {
+            throw error;
         }
     }
 }

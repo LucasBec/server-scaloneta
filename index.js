@@ -88,5 +88,5 @@ app.get('/jugadores', (req, res) =>{
 
 
 app.listen(process.env.PUERTO, ()=>{
-    console.log('- 🛵 API prog3 iniciada en el puerto ' + process.env.PUERTO);
+    console.log(`- 🛵 API prog3 iniciada en: http://localhost:${process.env.PUERTO}/`);
 })
