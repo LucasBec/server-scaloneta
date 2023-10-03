@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>Consulta por app React</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consulta desde la App Scaloneta</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       background-color: #f0f0f0;
       margin: 0;
       padding: 0;
@@ -14,29 +15,65 @@
       max-width: 600px;
       margin: 0 auto;
       padding: 20px;
-      background-color: #ffffff;
+      background-color: #e1e1e1d2;
+      border-radius: 10px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-    h1 {
-      color: #ca0e0e;
+    .header {
+      background-color: #7c18ff;
+      color: #fff;
+      text-align: center;
+      padding: 15px 0;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
     }
-    p {
-      color: #000;
-    }    
-    li {
-      color: #000;
-    } 
+    .header h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+    .content {
+      padding: 20px;
+    }
+    .content p {
+      font-size: 18px;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+    .content ul {
+      list-style: none;
+      padding: 0;
+    }
+    .content li {
+      margin-bottom: 10px;
+    }
+    .content li strong {
+      font-weight: bold;
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      font-size: larger;
+    }
+
+    .span {
+      font-weight: bold;
+      font-size: medium;
+    }
+    
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Nueva consulta desde Contacto.</h1>
-    <p>Recibiste una nueva consulta desde la App Scaloneta</p>    
-    <ul>
-        <li>De: {{nombre}}</li>
-        <li>Correo:  {{correo}}</li>
-        <li>Consulta: {{ mensaje }}</li>    
-    </ul>
+    <div class="header">
+      <h1>¡Nueva consulta desde la App Scaloneta!</h1>
+    </div>
+    <div class="content">
+      <p>¡Hola!</p>
+      <p>Has recibido una nueva consulta desde la App Scaloneta. Aquí están los detalles:</p>
+      <ul>
+        <li><strong>Nombre:</strong> <span style="font-size: 15px;">{{nombre}}</span></li>
+        <li><strong>Correo:</strong> <span style="font-size: 14px;">{{correo}}</span></li>
+        <li style="background-color: #bababac8;"><strong>Consulta:</strong> <span style="font-size: 14px;">{{mensaje}}</span></li>
+      </ul>
+      <p>Por favor, responde a esta consulta lo antes posible.</p>
+    </div>
   </div>
 </body>
 </html>

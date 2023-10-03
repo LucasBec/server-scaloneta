@@ -1,6 +1,6 @@
 const {Router} = require('express');
 
-const { buscarPorId, buscarTodos,eliminar, crear } = require('../../controladores/futbolista');
+const { buscarPorId, buscarTodos,eliminar, crear, editar } = require('../../controladores/futbolista');
 
 
 const router = Router();
@@ -13,7 +13,7 @@ router.post('/futbolistas', crear);
 router.delete('/futbolistas/:idFutbolista', eliminar);
 
 // //actualizar
-// router.put('/futbolistas/:idFutbolista');
+router.put('/futbolistas/:idFutbolista', editar);
 
 // //buscar
 router.get('/futbolistas', buscarTodos);

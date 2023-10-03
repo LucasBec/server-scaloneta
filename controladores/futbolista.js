@@ -48,6 +48,13 @@ eliminar = async (req, res) => {
     }
 }
 
+
+// Función para verificar si un futbolista con un DNI ya existe
+const futbolistaExistente = async (dni) => {
+    const futbolista = await buscarPorDNI(dni);
+    return futbolista !== null; // Devuelve true si el futbolista existe, false si no existe
+};
+
 crear = async (req, res) => {
     const { dni, nombre, apellido, posicion, apodo, foto, pieHabil } = req.body;
 
@@ -60,7 +67,7 @@ crear = async (req, res) => {
 
             if (futbolistaExistente) {
                 // Si futbolistaExistente tiene un valor, significa que ya existe un futbolista con ese DNI
-                res.status(400).json({ estado: 'FALLA', msj: 'El DNI ya está registrado' });
+                res.status(400).json({ estado: 'FALLA', msj: 'El DNI ya ha sido registrado anteriormente' });
             } else {
                 // Si no existe un futbolista con ese DNI, procede a crear el nuevo futbolista
                 const futbolista = {
@@ -77,15 +84,44 @@ crear = async (req, res) => {
                 res.status(201).json({ estado: 'ok', msj: 'Futbolista creado', dato: futbolistaNuevo });
             }
         } catch (error) {
-            throw error;
+            res.status(500).json({ estado: 'FALLA', msj: 'Falla del servidor' });
         }
     }
 }
+
+editar = async (req, res) => {
+    const idFutbolista = req.params.idFutbolista; // Obtenemos el ID del futbolista de los parámetros
+    const { dni, nombre, apellido, posicion, pieHabil } = req.body;
+    
+    if(!idFutbolista){
+        res.status(404).json({estado:'FALLO', msj:'no se especifico el id del futbolista'});
+    }
+
+    else if (!dni || !nombre || !apellido || !posicion || !pieHabil) {
+        // Verificamos si falta alguno de los campos obligatorios
+        res.status(400).json({ estado: 'FALLA', msj: 'Faltan datos obligatorios' });
+        } else {
+            try {
+                const futbolistaActualizado = await futbolistaBD.editar(idFutbolista, nuevosDatos);
+                if (futbolistaActualizado) {
+                    res.status(200).json({ estado: 'OK', msj: 'Futbolista editado exitosamente', dato: futbolistaActualizado });
+                } else {
+                    res.status(404).json({ estado: 'FALLO', msj: 'Futbolista no encontrado' });
+                }
+            } catch (error) {
+                res.status(500).json({ estado: 'FALLA', msj: 'Error al actualizar el futbolista' });
+            }
+        }
+};
+
+
 
 
 module.exports = {
     buscarPorId,
     buscarTodos,
     eliminar,
-    crear
+    crear,
+    editar,
+    futbolistaExistente,
 }
