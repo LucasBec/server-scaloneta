@@ -78,7 +78,7 @@ const buscarPorDNI = async (dni) => {
 };
 
 // Función para editar los datos de un futbolista por su ID
-const editar = async (idFutbolista, nuevosDatos) => {
+const editar = async (nuevosDatos, idFutbolista) => {
     const consulta = 'UPDATE futbolista SET ? WHERE activo = 1 AND idFutbolista = ?';
     try {
         await conexion.query(consulta, [nuevosDatos, idFutbolista]);

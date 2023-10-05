@@ -89,30 +89,40 @@ crear = async (req, res) => {
     }
 }
 
+
+//tener en cuenta que la funcion editar no permite editar el dni ya que es unico de cada persona
 editar = async (req, res) => {
     const idFutbolista = req.params.idFutbolista; // Obtenemos el ID del futbolista de los parámetros
-    const { dni, nombre, apellido, posicion, pieHabil } = req.body;
+    const { nombre, apellido, posicion, apodo, pieHabil, foto } = req.body;
     
-    if(!idFutbolista){
-        res.status(404).json({estado:'FALLO', msj:'no se especifico el id del futbolista'});
-    }
-
-    else if (!dni || !nombre || !apellido || !posicion || !pieHabil) {
-        // Verificamos si falta alguno de los campos obligatorios
+    if (!idFutbolista) {
+        res.status(404).json({ estado: 'FALLO', msj: 'No se especificó el ID del futbolista' });
+    } else if (!nombre || !apellido || !posicion || !pieHabil) {
+        // ^Verificamos si falta alguno de los campos obligatorios^
         res.status(400).json({ estado: 'FALLA', msj: 'Faltan datos obligatorios' });
-        } else {
-            try {
-                const futbolistaActualizado = await futbolistaBD.editar(idFutbolista, nuevosDatos);
-                if (futbolistaActualizado) {
-                    res.status(200).json({ estado: 'OK', msj: 'Futbolista editado exitosamente', dato: futbolistaActualizado });
-                } else {
-                    res.status(404).json({ estado: 'FALLO', msj: 'Futbolista no encontrado' });
-                }
-            } catch (error) {
-                res.status(500).json({ estado: 'FALLA', msj: 'Error al actualizar el futbolista' });
+    } else {
+        const nuevosDatos = {
+            nombre: nombre,
+            apellido: apellido,
+            posicion: posicion,
+            apodo: apodo,
+            foto: foto,
+            pieHabil: pieHabil
+        };
+
+        try {
+            const futbolistaActualizado = await futbolistaBD.editar(nuevosDatos, idFutbolista);
+            if (futbolistaActualizado) {
+                res.status(200).json({ estado: 'OK', msj: 'Futbolista editado exitosamente', dato: futbolistaActualizado });
+            } else {
+                res.status(404).json({ estado: 'FALLO', msj: 'Futbolista no encontrado' });
             }
+        } catch (error) {
+            res.status(500).json({ estado: 'FALLA', msj: 'Error al actualizar el futbolista' });
         }
+    }
 };
+
 
 
 
