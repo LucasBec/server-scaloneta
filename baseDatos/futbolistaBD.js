@@ -28,7 +28,7 @@ const buscarPorId = async (idFutbolista) => {
 //conssulta a la base de datos para buscar todos los futbolistas
 const buscarTodos = async () => {
 
-    const consulta = `SELECT  dni, nombre, apellido, apodo, foto, 
+    const consulta = `SELECT  idFutbolista, dni, nombre, apellido, apodo, foto, 
     (CASE
         WHEN posicion = 0 THEN 'Arquero'
         WHEN posicion = 1 THEN 'Defensor'
@@ -68,6 +68,17 @@ const crear = async (futbolista) => {
 
 // Función para buscar un futbolista por DNI
 const buscarPorDNI = async (dni) => {
+    const consulta = 'SELECT * FROM futbolista WHERE dni = ?';
+    try {
+        const [futbolista] = await conexion.query(consulta, [dni]);
+        return futbolista[0]; // Devuelve el primer resultado (o null si no se encuentra)
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Función para buscar un futbolista por DNI
+const obtenerId = async () => {
     const consulta = 'SELECT * FROM futbolista WHERE dni = ?';
     try {
         const [futbolista] = await conexion.query(consulta, [dni]);
