@@ -2,30 +2,26 @@
 const express = require('express');
 // envio de correo electrónicos
 const nodemailer = require('nodemailer');
-
 // para gestionar cors
 const cors = require('cors');
-
-// ESTO NO SE VIO EN CLASES
 // para loguear las peticiones que recibe el servidor
 var morgan = require('morgan');
 //para trabajar con el sistema de archivos: crear leer etc archivos
 var fs = require('fs');
 // trabajar con las rutas de archivos y directorios del sistema de archivos
 var path = require('path');
-
 // handlerbar 
 const handlebars = require('handlebars');
-
 // mysql
 const mysql = require('mysql2');
-
 // manejo de variables de entorno
 require('dotenv').config();
-
-
+// configuracion de passport
+const passport = require("passport");
+require('./config/passport');
 // mi app servidor 
 const app = express();
+
 
 // recibimos datos en formato json
 app.use(express.json());
@@ -56,36 +52,32 @@ app.get('/', (req, res)=>{
 
 
 // las rutas del api
-const v1Publico = require('./v1/rutas/publico');
-const v1Futbolista = require('./v1/rutas/futbolista');
+
 
 // middlEWare
+const { esEntrenador } = require('./middlewares/esEntrenador');
+
+const v1Publico = require('./v1/rutas/publico');
+const v1Auth = require('./v1/rutas/auth');
+
+const v1Rival = require('./v1/rutas/rival');
+const v1Futbolista = require('./v1/rutas/futbolista');
+const v1Convocatoria = require('./v1/rutas/convocatoria');
+const v1FutbolistaConvocatoria = require('./v1/rutas/futbolistaConvocatoria');
+
+const v1Estadistica = require('./v1/rutas/estadistica');
+
 app.use('/api/v1/publico', v1Publico);
+app.use('/api/v1/auth', v1Auth);
+
 app.use('/api/v1/futbolista', v1Futbolista);
+app.use('/api/v1/rival', v1Rival);
 
-
-// conexión a la base de datos
-
-/* const conexion = mysql.createConnection({
-    host: 'localhost',
-    user: 'scaloneta12',
-    database: 'scaloneta12',
-    password: '2023$prog3'
-});
-
-app.get('/jugadores', (req, res) =>{
-    const consulta = 'SELECT * FROM futbolista WHERE activo = 1';
-    conexion.execute(consulta, (error, resultado, campos) => {
-        if (error){
-            console.log(error);
-        }else{
-            console.log(campos);
-            res.status(200).json(resultado);
-        }
-    })
-}); */
-
-
+// la ruta necesita que el cliente este autenticado y sea entrenador
+app.use('/api/v1/futbolista', [passport.authenticate('jwt', {session: false}), esEntrenador], v1Futbolista);
+app.use('/api/v1/convocatoria', v1Convocatoria);
+app.use('/api/v1/futbolistaConvocatoria', v1FutbolistaConvocatoria);
+app.use('/api/v1/estadistica', v1Estadistica);
 
 app.listen(process.env.PUERTO, ()=>{
     console.log(`- 🛵 API prog3 iniciada en: http://localhost:${process.env.PUERTO}/`);
