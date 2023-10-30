@@ -56,6 +56,8 @@ app.get('/', (req, res)=>{
 
 // middlEWare
 const { esEntrenador } = require('./middlewares/esEntrenador');
+const { esPresidente } = require('./middlewares/esPresidente');
+
 
 const v1Publico = require('./v1/rutas/publico');
 const v1Auth = require('./v1/rutas/auth');
@@ -67,17 +69,21 @@ const v1FutbolistaConvocatoria = require('./v1/rutas/futbolistaConvocatoria');
 
 const v1Estadistica = require('./v1/rutas/estadistica');
 
+
 app.use('/api/v1/publico', v1Publico);
 app.use('/api/v1/auth', v1Auth);
 
-app.use('/api/v1/futbolista', v1Futbolista);
+app.use('/api/v1/futbolista', v1Futbolista); //acceso público
 app.use('/api/v1/rival', v1Rival);
 
 // la ruta necesita que el cliente este autenticado y sea entrenador
 app.use('/api/v1/futbolista', [passport.authenticate('jwt', {session: false}), esEntrenador], v1Futbolista);
-app.use('/api/v1/convocatoria', v1Convocatoria);
-app.use('/api/v1/futbolistaConvocatoria', v1FutbolistaConvocatoria);
-app.use('/api/v1/estadistica', v1Estadistica);
+app.use('/api/v1/convocatoria', [passport.authenticate('jwt', {session: false}), esEntrenador], v1Convocatoria);
+app.use('/api/v1/futbolistaConvocatoria', [passport.authenticate('jwt', {session: false}), esEntrenador], v1FutbolistaConvocatoria);
+//dashboard para presidente
+app.use('/api/v1/estadistica', [passport.authenticate('jwt', {session: false}), esPresidente], v1Estadistica);
+
+
 
 app.listen(process.env.PUERTO, ()=>{
     console.log(`- 🛵 API prog3 iniciada en: http://localhost:${process.env.PUERTO}/`);

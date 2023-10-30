@@ -3,7 +3,7 @@ const usuarioDB = require('../baseDatos/usuarioBD');
 
 require('dotenv').config();
 
-const esEntrenador = async (req, res, next) => {
+const esPresidente = async (req, res, next) => {
 
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; // El token es enviado utilizando "Bearer"
@@ -14,14 +14,14 @@ const esEntrenador = async (req, res, next) => {
 
     jwt.verify(token, process.env.JWT_SECRET, async (err, usuario) => {
         if (err) {
-            return res.status(403).send({ status: "Fallo", data: { error: "Token inválido." } }); // Token inválido
+            return res .status(403).send({ status: "Fallo", data: { error: "Token inválido." } }); // Token inválido
         }
 
         const data = await usuarioDB.buscarPorId(usuario.idUsuario);
 
         // tipoUsuario = 0 presidente
         // tipoUsuario = 1 entrenador
-        if (data.tipoUsuario != 1) {
+        if (data.tipoUsuario != 0) {
             return res.status(403).send({ status: "Fallo", data: { error: "No tiene los privilegios necesarios." } });
         }
 
@@ -29,4 +29,4 @@ const esEntrenador = async (req, res, next) => {
     });
 };
 
-module.exports = { esEntrenador };
+module.exports = { esPresidente };
