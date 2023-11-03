@@ -11,9 +11,11 @@ const borrarPorIdConvocatoria = async (cn,idConvocatoria) => {
 const FutbolistaConvocatoriaPorIdConvocatoria = async (idConvocatoria) => {
     const consulta = `SELECT f.idFutbolista, f.nombre, f.apellido, fc.dorsal, fc.convocatoria,
                         (CASE
-                            WHEN f.pieHabil = 0 THEN 'Derecha'
-                            WHEN f.pieHabil = 1 THEN 'Izquierda'
-                        END) as pieHabil,
+                            WHEN posicion = 0 THEN 'Arquero'
+                            WHEN posicion = 1 THEN 'Defensor'
+                            WHEN posicion = 2 THEN 'Mediocampista'
+                            WHEN posicion = 3 THEN 'Delantero'
+                        END) as posicion,
                         (CASE
                             WHEN fc.esTitular = 0 THEN 'No'
                             WHEN fc.esTitular = 1 THEN 'Si'
@@ -30,6 +32,7 @@ const FutbolistaConvocatoriaPorIdConvocatoria = async (idConvocatoria) => {
 
     return convocados;
 }
+
 
 
 const nueva =  async(idConvocatoria,futbolistas) => {
@@ -54,10 +57,21 @@ const nueva =  async(idConvocatoria,futbolistas) => {
         cn.release();
     }
 }
-    
+
+const actualizarEsCapitanYEsTitular = async (idFutbolista, idConvocatoria, esCapitan, esTitular) => {
+    const consulta = 'UPDATE futbolistaConvocatoria SET esCapitan = ?, esTitular = ? WHERE futbolista = ? AND convocatoria = ?';
+    try {
+        const [result] = await conexion.query(consulta, [esCapitan, esTitular, idFutbolista, idConvocatoria]);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
 
 module.exports = {
     nueva,
     borrarPorIdConvocatoria,
-    FutbolistaConvocatoriaPorIdConvocatoria
+    FutbolistaConvocatoriaPorIdConvocatoria,
+    actualizarEsCapitanYEsTitular,
+    conexion,
 }

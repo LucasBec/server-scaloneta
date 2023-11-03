@@ -17,7 +17,7 @@ const buscarTodas = async () => {
     const consulta = `SELECT * FROM convocatoria as c INNER JOIN rival AS r ON r.idRival = c.rival`;
 
     const [convocatorias] = await conexion.query(consulta);    
-    console.log(convocatorias)
+    //console.log(convocatorias)
     return convocatorias;
 }
 
