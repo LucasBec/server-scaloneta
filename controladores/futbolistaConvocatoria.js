@@ -24,7 +24,7 @@ FutbolistaConvocatoriaPorIdConvocatoria = async (req, res) => {
     }
 };
 
-const actualizarEquipoTitular = async (idConvocatoria, equipoTitular) => {
+/* const actualizarEquipoTitular = async (idConvocatoria, equipoTitular) => {
     const { titulares, capitan } = equipoTitular;
     const cn = await futbolistasConvocatoriaBD.conexion.getConnection();
     try {
@@ -35,6 +35,29 @@ const actualizarEquipoTitular = async (idConvocatoria, equipoTitular) => {
         if (capitan.length > 0) {
             await futbolistasConvocatoriaBD.actualizarEsCapitanYEsTitular(capitan[0], idConvocatoria, 1, 1);
         }
+        await cn.commit();
+    } catch (error) {
+        await cn.rollback();
+        throw error;
+    } finally {
+        cn.release();
+    }
+}; */
+
+const actualizarEquipoTitular = async (idConvocatoria, equipoTitular) => {
+    const cn = await futbolistasConvocatoriaBD.conexion.getConnection();
+    try {
+        await cn.beginTransaction();
+
+        for (const jugador of equipoTitular) {
+            const { idFutbolista, dorsal, esCapitan } = jugador;
+            if (esCapitan) {
+                await futbolistasConvocatoriaBD.actualizarEsCapitanYEsTitular(idFutbolista, idConvocatoria, 1, 1, dorsal);
+            } else {
+                await futbolistasConvocatoriaBD.actualizarEsCapitanYEsTitular(idFutbolista, idConvocatoria, 0, 1, dorsal);
+            }
+        }
+
         await cn.commit();
     } catch (error) {
         await cn.rollback();
