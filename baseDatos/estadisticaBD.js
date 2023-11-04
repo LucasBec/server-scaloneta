@@ -1,27 +1,37 @@
 const conexion = require('./conexionBD');
 
 const estadistica = async () => {
+    try {
+        const consulta = 'call procEstadistica()';
+        const [results] = await conexion.query(consulta);
 
-    const consulta = 'call procEstadistica()';
-    
-    const [results] = await conexion.query(consulta);    
-    
-    // console.log(results);
-    const convocatorias = results.convocatorias;
-    const futbolistas = results.totalFutbolistas;
-    const fecha = results.fechaUltimasConvocatorias;
+        if (results && results[0] && results[0][0]) {
+            const futbolistas = results[0][0].totalFutbolistas;
+            const convocatorias = results[0][0].convocatorias;
 
-    const datos = {
-        totalFutbolistas : futbolistas,
-        convocatorias : convocatorias,
-        fechaProximoPartido : fecha
+            let fecha = '';
+            if (results[0][0].fechaUltimasConvocatorias) {
+                fecha = results[0][0].fechaUltimasConvocatorias;
+            }
+
+            const datos = {
+                totalFutbolistas: futbolistas,
+                convocatorias: convocatorias,
+                fechaProximoPartido: fecha,
+            };
+
+            return datos;
+        } else {
+            // En este punto, los datos no están en la estructura esperada.
+            console.error('La estructura de los resultados no es la esperada.');
+            return null;
+        }
+    } catch (error) {
+        console.error('Error al ejecutar la consulta:', error);
+        return null;
     }
-
-    return datos;
-}
-
+};
 
 module.exports = {
-    estadistica
-}
-
+    estadistica,
+};
