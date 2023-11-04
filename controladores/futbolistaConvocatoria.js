@@ -44,19 +44,22 @@ FutbolistaConvocatoriaPorIdConvocatoria = async (req, res) => {
     }
 }; */
 
-const actualizarEquipoTitular = async (idConvocatoria, equipoTitular) => {
+const actualizarEquipoTitular = async (idConvocatoria, equipoTitular, idCapitan) => {
     const cn = await futbolistasConvocatoriaBD.conexion.getConnection();
     try {
         await cn.beginTransaction();
 
         for (const jugador of equipoTitular) {
-            const { idFutbolista, dorsal, esCapitan } = jugador;
-            if (esCapitan) {
-                await futbolistasConvocatoriaBD.actualizarEsCapitanYEsTitular(idFutbolista, idConvocatoria, 1, 1, dorsal);
-            } else {
+            const { idFutbolista, dorsal} = jugador;
+            {
                 await futbolistasConvocatoriaBD.actualizarEsCapitanYEsTitular(idFutbolista, idConvocatoria, 0, 1, dorsal);
             }
+            if (idCapitan) {
+                await futbolistasConvocatoriaBD.actualizarEsCapitanYEsTitular(idCapitan, idConvocatoria, 1, 1);
+            }
         }
+
+        console.log('idcapitan:', idCapitan)
 
         await cn.commit();
     } catch (error) {
@@ -68,9 +71,10 @@ const actualizarEquipoTitular = async (idConvocatoria, equipoTitular) => {
 };
 
 equipoTitular = async (req, res) => {
-    const { idConvocatoria, equipoTitular } = req.body;
+    const { idConvocatoria, equipoTitular, idCapitan} = req.body;
     try {
-        await actualizarEquipoTitular(idConvocatoria, equipoTitular);
+        await actualizarEquipoTitular(idConvocatoria, equipoTitular, idCapitan);
+        console.log('convocatoria:', idConvocatoria,'equipoTitular:', equipoTitular,'idCapitan', idCapitan)
         res.status(200).json({ estado: 'OK', msj: 'Equipo titular establecido con éxito.' });
     } catch (error) {
         console.error(error);

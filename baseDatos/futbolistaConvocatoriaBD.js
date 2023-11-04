@@ -68,10 +68,10 @@ const nueva =  async(idConvocatoria,futbolistas) => {
     }
 }; */
 
-const actualizarEsCapitanYEsTitular = async (idFutbolista, idConvocatoria, esCapitan, esTitular, dorsal) => {
+const actualizarEsCapitanYEsTitular = async (idFutbolista, idConvocatoria, idCapitan, esTitular, dorsal) => {
     const consulta = 'UPDATE futbolistaConvocatoria SET esCapitan = ?, esTitular = ?, dorsal = ? WHERE futbolista = ? AND convocatoria = ?';
     try {
-        const [result] = await conexion.query(consulta, [esCapitan, esTitular, dorsal, idFutbolista, idConvocatoria]);
+        const [result] = await conexion.query(consulta, [idCapitan, esTitular, dorsal, idFutbolista, idConvocatoria]);
         return result;
     } catch (error) {
         throw error;
