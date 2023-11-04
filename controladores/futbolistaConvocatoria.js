@@ -1,13 +1,14 @@
 const futbolistasConvocatoriaBD = require('../baseDatos/futbolistaConvocatoriaBD');
 
 
-nueva  = async (req, res) => {
-    const {idConvocatoria, futbolistas} = req.body;
-    try{
-        const nuevaLista = await futbolistasConvocatoriaBD.nueva(idConvocatoria,futbolistas);
-        console.log('futbolistas: ',futbolistas)
-        res.status(201).json({estado:'OK', msj:'Convocatoria Realizada!'});
-    }catch (exec){
+nueva = async (req, res) => {
+    const { idConvocatoria, futbolistas, fecha } = req.body;
+    try {
+        // Llama a la función nueva incluyendo la fecha en los datos
+        await futbolistasConvocatoriaBD.nueva(idConvocatoria, futbolistas, fecha);
+
+        res.status(201).json({ estado: 'OK', msj: 'Convocatoria Realizada!' });
+    } catch (exec) {
         throw exec;
     }
 };
@@ -24,26 +25,6 @@ FutbolistaConvocatoriaPorIdConvocatoria = async (req, res) => {
     }
 };
 
-/* const actualizarEquipoTitular = async (idConvocatoria, equipoTitular) => {
-    const { titulares, capitan } = equipoTitular;
-    const cn = await futbolistasConvocatoriaBD.conexion.getConnection();
-    try {
-        await cn.beginTransaction();
-        for (const idFutbolista of titulares) {
-            await futbolistasConvocatoriaBD.actualizarEsCapitanYEsTitular(idFutbolista, idConvocatoria, 0, 1);
-        }
-        if (capitan.length > 0) {
-            await futbolistasConvocatoriaBD.actualizarEsCapitanYEsTitular(capitan[0], idConvocatoria, 1, 1);
-        }
-        await cn.commit();
-    } catch (error) {
-        await cn.rollback();
-        throw error;
-    } finally {
-        cn.release();
-    }
-}; */
-
 const actualizarEquipoTitular = async (idConvocatoria, equipoTitular, idCapitan) => {
     const cn = await futbolistasConvocatoriaBD.conexion.getConnection();
     try {
@@ -54,8 +35,8 @@ const actualizarEquipoTitular = async (idConvocatoria, equipoTitular, idCapitan)
             {
                 await futbolistasConvocatoriaBD.actualizarEsCapitanYEsTitular(idFutbolista, idConvocatoria, 0, 1, dorsal);
             }
-            if (idCapitan) {
-                await futbolistasConvocatoriaBD.actualizarEsCapitanYEsTitular(idCapitan, idConvocatoria, 1, 1);
+            if (idCapitan == idFutbolista) { //si el id del capitan coincide con el id del futbolista se asigna a esCapitan = 1
+                await futbolistasConvocatoriaBD.actualizarEsCapitanYEsTitular(idCapitan, idConvocatoria, 1, 1, dorsal);
             }
         }
 

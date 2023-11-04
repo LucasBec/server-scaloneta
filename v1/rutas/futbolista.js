@@ -1,4 +1,5 @@
 const {Router} = require('express');
+const {upload} = require("../../controladores/subirArchivo");
 
 const { buscarPorId, buscarTodos,eliminar, crear, editar } = require('../../controladores/futbolista');
 
@@ -7,7 +8,7 @@ const router = Router();
 
 
 //agregar
-router.post('/futbolistas', crear);
+router.post('/futbolistas', upload, crear);
 
 // //eliminar
 router.delete('/futbolistas/:idFutbolista', eliminar);

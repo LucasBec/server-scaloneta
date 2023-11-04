@@ -52,7 +52,11 @@ app.get('/', (req, res)=>{
 
 
 // las rutas del api
-
+// Ruta pública para acceder a los imagenes
+app.get('/archivos/:nombreArchivo', (req, res) => {
+    const nombreArchivo = req.params.nombreArchivo;
+    res.sendFile(path.join(__dirname, 'archivos', nombreArchivo));
+});
 
 // middlEWare
 const { esEntrenador } = require('./middlewares/esEntrenador');

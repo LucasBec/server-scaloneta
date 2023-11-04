@@ -35,19 +35,19 @@ const FutbolistaConvocatoriaPorIdConvocatoria = async (idConvocatoria) => {
 
 
 
-const nueva =  async(idConvocatoria,futbolistas) => {
+const nueva = async (idConvocatoria, futbolistas, fecha) => {
     const cn = await conexion.getConnection();
 
     try {
         await cn.beginTransaction();
- 
-        await borrarPorIdConvocatoria(cn,idConvocatoria);
-        
-        futbolistas.forEach(async element => {
-            const dato = {convocatoria:idConvocatoria, futbolista:element}
+
+        await borrarPorIdConvocatoria(cn, idConvocatoria);
+
+        for (const futbolista of futbolistas) {
+            const dato = { convocatoria: idConvocatoria, futbolista: futbolista, fecha: fecha };
             const consulta = 'INSERT INTO futbolistaConvocatoria SET ?';
-            const [result] = await cn.query(consulta, dato);
-        })
+            await cn.query(consulta, dato);
+        }
 
         await cn.commit();
     } catch (error) {

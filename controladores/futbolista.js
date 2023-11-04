@@ -56,7 +56,15 @@ const futbolistaExistente = async (dni) => {
 };
 
 crear = async (req, res) => {
-    const { dni, nombre, apellido, posicion, apodo, foto, pieHabil } = req.body;
+    const { dni, nombre, apellido, posicion, apodo, pieHabil } = req.body;
+    const file = req.file; 
+     // obtengo el nombre del archivo que manda el cliente
+     let filename;
+     if(!req.file){
+         filename = 'default.jpg'; 
+     }else{
+         filename = req.file.filename; 
+     }
 
     if (!dni || !nombre || !apellido || !posicion || !pieHabil) {
         res.status(404).json({ estado: 'FALLA', msj: 'Faltan datos obligatorios' });
@@ -76,7 +84,7 @@ crear = async (req, res) => {
                     apellido: apellido,
                     posicion: posicion,
                     apodo: apodo,
-                    foto: foto,
+                    foto: file.filename,
                     pieHabil: pieHabil
                 };
 
