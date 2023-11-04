@@ -30,8 +30,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 
 
-// ESTO NO SE VIO EN CLASES
-// descomentar y mirar lo que muestra la consola en cada solicitud (get o post) que recibe el servidor
+// muestra en la consola en cada solicitud que recibe el servidor
 app.use(morgan('short')); 
 
 // CREA UN ARCHIVO DE ACCESO

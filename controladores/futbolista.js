@@ -55,15 +55,15 @@ const futbolistaExistente = async (dni) => {
     return futbolista !== null; // Devuelve true si el futbolista existe, false si no existe
 };
 
+
 crear = async (req, res) => {
     const { dni, nombre, apellido, posicion, apodo, pieHabil } = req.body;
     const file = req.file; 
-     // obtengo el nombre del archivo que manda el cliente
-     let filename;
-     if(!req.file){
-         filename = 'default.jpg'; 
-     }else{
-         filename = req.file.filename; 
+     
+    let filename = 'default.jpg'; // Establecer el nombre de archivo predeterminado
+
+     if (file) {
+         filename = file.filename; // Si se proporciona un archivo, usa su nombre
      }
 
     if (!dni || !nombre || !apellido || !posicion || !pieHabil) {
@@ -84,8 +84,9 @@ crear = async (req, res) => {
                     apellido: apellido,
                     posicion: posicion,
                     apodo: apodo,
-                    foto: file.filename,
-                    pieHabil: pieHabil
+                    foto: filename,
+                    pieHabil: pieHabil,
+                    foto:filename // guardo en la base de datos el nombre del archivo
                 };
 
                 const futbolistaNuevo = await futbolistaBD.crear(futbolista);
