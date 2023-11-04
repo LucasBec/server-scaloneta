@@ -37,9 +37,21 @@ const modificar = async (dato, idConvocatoria) => {
     return buscarPorId(idConvocatoria)
 }
 
+const resultado = async (resultado, resultadoConvocatoriaId) => {
+
+    const consulta = 'UPDATE convocatoria SET ? WHERE idConvocatoria = ?';
+    try {
+        await conexion.query(consulta, [resultado, resultadoConvocatoriaId]);
+        return buscarPorId(resultadoConvocatoriaId); // Devuelve los datos actualizados del futbolista
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     buscarPorId,
     buscarTodas,
     nueva, 
-    modificar
+    modificar,
+    resultado
 }

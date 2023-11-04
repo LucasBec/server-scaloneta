@@ -1,6 +1,6 @@
 const Router = require('express');
 
-const {buscarPorId, buscarTodas, nueva, modificar} = require('../../controladores/convocatoria');
+const {buscarPorId, buscarTodas, nueva, modificar, resultado} = require('../../controladores/convocatoria');
 
 
 const router = Router();
@@ -8,7 +8,7 @@ const router = Router();
 
 router
     .post('/nueva', nueva)
-    .put('/modificar/:idConvocatoria', modificar)
+    .put('/convocatorias/:idConvocatoria', resultado)
     .get('/convocatorias', buscarTodas)
     .get('/convocatorias/:idConvocatoria', buscarPorId);
 
