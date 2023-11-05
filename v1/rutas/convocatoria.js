@@ -1,6 +1,6 @@
 const Router = require('express');
 
-const {buscarPorId, buscarTodas, nueva, modificar, resultado} = require('../../controladores/convocatoria');
+const {buscarPorId, buscarTodas, nueva, resultado} = require('../../controladores/convocatoria');
 
 
 const router = Router();

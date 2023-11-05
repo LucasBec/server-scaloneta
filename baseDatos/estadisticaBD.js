@@ -10,14 +10,14 @@ const estadistica = async () => {
             const convocatorias = results[0][0].convocatorias;
 
             let fecha = '';
-            if (results[0][0].fechaUltimasConvocatorias) {
-                fecha = results[0][0].fechaUltimasConvocatorias;
+            if (results[0][0].fechaProximaConvocatoria) {
+                fecha = results[0][0].fechaProximaConvocatoria;
             }
 
             const datos = {
                 totalFutbolistas: futbolistas,
                 convocatorias: convocatorias,
-                fechaProximoPartido: fecha,
+                fechaProximaConvocatoria: fecha,
             };
 
             return datos;
