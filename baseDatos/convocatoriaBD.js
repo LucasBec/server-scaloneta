@@ -29,13 +29,17 @@ const nueva = async (convocatoria) => {
     return buscarPorId(convocatoriaNueva.insertId);
 }
 
-const modificar = async (dato, idConvocatoria) => {
+/* const modificar = async (dato, idConvocatoria) => {
     const consulta = 'UPDATE convocatoria SET ? WHERE idConvocatoria = ?';
     
     const [result] = await conexion.query(consulta,[dato, idConvocatoria]);
     
     return buscarPorId(idConvocatoria)
 }
+ */
+
+
+
 
 const resultado = async (resultado, resultadoConvocatoriaId) => {
 
@@ -51,7 +55,6 @@ const resultado = async (resultado, resultadoConvocatoriaId) => {
 module.exports = {
     buscarPorId,
     buscarTodas,
-    nueva, 
-    modificar,
+    nueva,
     resultado
 }
