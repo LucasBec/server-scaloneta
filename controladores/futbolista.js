@@ -86,7 +86,8 @@ crear = async (req, res) => {
                     apodo: apodo,
                     foto: filename,
                     pieHabil: pieHabil,
-                    foto:filename // guardo en la base de datos el nombre del archivo
+                    foto:filename, // guardo en la base de datos el nombre del archivo
+                    activo: 1 //corrección si la base de datos no tuviera por default el activo en 1
                 };
 
                 const futbolistaNuevo = await futbolistaBD.crear(futbolista);
